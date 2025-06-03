@@ -1,11 +1,20 @@
 from django.contrib import admin
-from .models import Category, Location, Post
+from .models import Category, Location, Post, Comment
+
+
+class PostInline(admin.StackedInline):
+    model = Post
+    extra = 0
+    show_change_link = True
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('title', 'is_published', 'slug')
+    inlines = (PostInline,)
+    list_display = ('title', 'is_published')
     list_editable = ('is_published',)
-    prepopulated_fields = {'slug': ('title',)}
+    list_display_links = ('title',)
+    search_fields = ('title',)
+    list_filter = ('is_published',)
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -15,17 +24,13 @@ class LocationAdmin(admin.ModelAdmin):
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'pub_date', 'is_published')
-    list_filter = ('category', 'location')
-    search_fields = ('title', 'text')
     list_editable = ('is_published',)
+    list_display_links = ('title',)
+    search_fields = ('title', 'text')
+    readonly_fields = ('created_at',)
 
 
-class PostInline(admin.StackedInline):
-    model = Post
-    extra = 0
-    show_change_link = True
-
-
-admin.site.register(Post)
-admin.site.register(Location)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Location, LocationAdmin)
+admin.site.register(Post, PostAdmin)
+admin.site.register(Comment)

@@ -19,6 +19,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'text')
     list_editable = ('is_published',)
 
+
 class PostInline(admin.StackedInline):
     model = Post
     extra = 0
